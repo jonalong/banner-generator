@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===================================================================
+ * 힐오 디자인 시스템 - Global Layer
+ * (Tailwind layers 안에서 디자인 시스템 베이스 정의)
+ * =================================================================== */
+
+@import url("https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css");
+
+@layer base {
+  html, body {
+    @apply font-suit bg-hgray-50 text-hgray-900 antialiased;
+  }
+
+  /* hidden 속성 강제 적용 (display: flex 등 우선순위 이슈 방지) */
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  /* Banner content는 ancestor container(banner) 기준 cqi 사용
+     자식 요소들이 banner의 inline-size 비례로 자동 스케일됨 */
+  .banner-content {
+    font-size: 1.555cqi;
+  }
+
+  .banner[data-mode="home"] {
+    aspect-ratio: 1029 / 480;
+  }
+
+  .banner[data-mode="regional"] {
+    aspect-ratio: 1029 / 343;
+  }
+
+  /* Banner 기본 더미 배경 (이미지 없을 때) */
+  .banner-bg {
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%),
+      linear-gradient(90deg, #6B7280 0%, #DFE1E5 50%, #D1D5DB 100%);
+  }
+}

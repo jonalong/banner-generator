@@ -1,0 +1,12 @@
+{
+  "name": "healio-banner-generator",
+  "version": "1.0.0",
+  "description": "힐오 배너 자동 생성 도구 (Tailwind CSS)",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./tailwind.css --minify",
+    "dev": "tailwindcss -i ./src/input.css -o ./tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

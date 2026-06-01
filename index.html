@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>힐오 배너 생성기</title>
+
+  <!-- Tailwind 빌드 결과 (사전 빌드: npm run build) -->
+  <link rel="stylesheet" href="tailwind.css" />
+
+  <!-- html2canvas (PNG export) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- 배너 cqi/em 시스템 인라인 (Tailwind components layer 에도 정의되어 있음) -->
+  <style>
+    /* Banner content는 ancestor container(banner) 기준 cqi 사용 */
+    .banner-content { font-size: 1.555cqi; }
+    .banner[data-mode="home"]     { aspect-ratio: 1029 / 480; }
+    .banner[data-mode="regional"] { aspect-ratio: 1029 / 343; }
+    .banner-bg {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.2) 100%),
+        linear-gradient(90deg, #6B7280 0%, #DFE1E5 50%, #D1D5DB 100%);
+    }
+  </style>
+</head>
+
+<body class="font-suit bg-hgray-50 text-hgray-900 antialiased">
+
+  <main class="max-w-[1440px] mx-auto px-[10px] pt-10 pb-16">
+    <div class="flex flex-wrap gap-y-5 gap-x-14 items-start justify-center">
+
+      <!-- ====================================================
+           좌측: 미리보기 패널 (Sticky 고정)
+           ==================================================== -->
+      <aside class="flex-[1_1_0] max-w-[500px] min-w-[420px] lg:sticky lg:top-10">
+        <div class="bg-white rounded-[21.6px] shadow-card-preview overflow-hidden flex flex-col w-full">
+
+          <!-- Tab Header -->
+          <header class="flex items-center gap-[27px] pt-[3.6px] px-[50.4px] border-b-[0.9px] border-hgray-200">
+            <button type="button"
+                    class="relative py-[18px] text-[20px] font-bold leading-none tracking-[-0.02em] text-hgray-900 transition-colors after:content-[''] after:absolute after:-bottom-[0.9px] after:left-0 after:right-0 after:h-[3.6px] after:bg-hgray-900 data-[active=false]:text-hgray-400 data-[active=false]:after:hidden hover:data-[active=false]:text-hgray-600"
+                    data-active="true"
+                    data-mode-btn="home">홈 배너 제작</button>
+            <button type="button"
+                    class="relative py-[18px] text-[20px] font-bold leading-none tracking-[-0.02em] text-hgray-900 transition-colors after:content-[''] after:absolute after:-bottom-[0.9px] after:left-0 after:right-0 after:h-[3.6px] after:bg-hgray-900 data-[active=false]:text-hgray-400 data-[active=false]:after:hidden hover:data-[active=false]:text-hgray-600"
+                    data-active="false"
+                    data-mode-btn="regional">지역/상급 병원 상단</button>
+          </header>
+
+          <!-- Live Preview + Download Button -->
+          <div class="bg-hgray-100 py-7 flex flex-col items-center justify-center">
+            <div class="flex flex-col gap-[14.4px] items-center">
+
+              <!-- Banner Preview -->
+              <div id="bannerPreview"
+                   class="banner banner-bg relative w-[375.07px] max-w-full data-[mode=regional]:aspect-[1029/343] rounded-[11.664px] overflow-hidden"
+                   data-mode="home"
+                   style="container-type: inline-size;">
+                <img class="absolute inset-0 w-full h-full object-cover hidden" src="" alt="" id="bannerImage" />
+                <div class="absolute inset-0 pointer-events-none" id="bannerOverlay"></div>
+
+                <div class="banner-content absolute inset-0 p-[2.25em_3em_3em] flex flex-col justify-between">
+                  <!-- top: 차별점 뱃지 chip × 2 -->
+                  <div class="flex flex-wrap gap-[1.5em]">
+                    <div id="chipBadge1" data-field="badge1" class="inline-flex items-center whitespace-nowrap gap-[0.375em] text-white transition-colors">
+                      <svg class="w-[2.25em] h-[2.25em] flex-shrink-0 overflow-visible" viewBox="10 10 34 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="filter: drop-shadow(0 0 0.375em rgba(0,0,0,0.18));">
+                        <path d="M27.7585 14.8435C30.8034 11.8136 35.1381 10.5086 39.113 14.4831C43.088 18.4731 41.7836 22.8086 38.7536 25.8386C38.3937 26.1985 37.9887 26.5136 37.5388 26.7985C37.9887 27.0835 38.3937 27.3986 38.7536 27.7585C41.7836 30.8035 43.088 35.139 39.113 39.114C35.1232 43.0884 30.7884 41.7834 27.7585 38.7536C27.3986 38.3937 27.0835 37.9887 26.7985 37.5388C26.5136 37.9887 26.1985 38.3936 25.8386 38.7536C22.7936 41.7836 18.4581 43.1039 14.4831 39.114C10.5081 35.124 11.8135 30.7885 14.8435 27.7585C15.2034 27.3985 15.6084 27.0835 16.0583 26.7985C15.6084 26.5136 15.2034 26.1985 14.8435 25.8386C11.8135 22.7936 10.5081 18.4581 14.4831 14.4831C18.4731 10.5082 22.8086 11.8135 25.8386 14.8435C26.1985 15.2034 26.5136 15.6084 26.7985 16.0583C27.0835 15.6084 27.3986 15.2034 27.7585 14.8435ZM34.4294 21.3991C33.8444 20.8141 32.9001 20.8141 32.3151 21.3991L25.8044 27.9685L22.0095 24.2341C21.4245 23.6491 20.4802 23.6639 19.8952 24.2487C19.3102 24.8337 19.3249 25.779 19.9099 26.364L24.7702 31.1491C25.0552 31.4339 25.4452 31.5837 25.82 31.5837L25.8044 31.5983C26.1943 31.5983 26.5699 31.449 26.8698 31.1491L34.4294 23.5134C35.0144 22.9284 35.0144 21.9841 34.4294 21.3991Z" fill="currentColor"/>
+                      </svg>
+                      <span id="textBadge1" class="text-[1.875em] font-bold leading-[1.35] tracking-[0.005em]" style="text-shadow: 0 0 0.75em rgba(0,0,0,0.25);">차별점 뱃지</span>
+                    </div>
+                    <div id="chipBadge2" data-field="badge2" class="inline-flex items-center whitespace-nowrap gap-[0.375em] text-white transition-colors">
+                      <svg class="w-[2.25em] h-[2.25em] flex-shrink-0 overflow-visible" viewBox="10 10 34 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="filter: drop-shadow(0 0 0.375em rgba(0,0,0,0.18));">
+                        <path d="M27.7585 14.8435C30.8034 11.8136 35.1381 10.5086 39.113 14.4831C43.088 18.4731 41.7836 22.8086 38.7536 25.8386C38.3937 26.1985 37.9887 26.5136 37.5388 26.7985C37.9887 27.0835 38.3937 27.3986 38.7536 27.7585C41.7836 30.8035 43.088 35.139 39.113 39.114C35.1232 43.0884 30.7884 41.7834 27.7585 38.7536C27.3986 38.3937 27.0835 37.9887 26.7985 37.5388C26.5136 37.9887 26.1985 38.3936 25.8386 38.7536C22.7936 41.7836 18.4581 43.1039 14.4831 39.114C10.5081 35.124 11.8135 30.7885 14.8435 27.7585C15.2034 27.3985 15.6084 27.0835 16.0583 26.7985C15.6084 26.5136 15.2034 26.1985 14.8435 25.8386C11.8135 22.7936 10.5081 18.4581 14.4831 14.4831C18.4731 10.5082 22.8086 11.8135 25.8386 14.8435C26.1985 15.2034 26.5136 15.6084 26.7985 16.0583C27.0835 15.6084 27.3986 15.2034 27.7585 14.8435ZM34.4294 21.3991C33.8444 20.8141 32.9001 20.8141 32.3151 21.3991L25.8044 27.9685L22.0095 24.2341C21.4245 23.6491 20.4802 23.6639 19.8952 24.2487C19.3102 24.8337 19.3249 25.779 19.9099 26.364L24.7702 31.1491C25.0552 31.4339 25.4452 31.5837 25.82 31.5837L25.8044 31.5983C26.1943 31.5983 26.5699 31.449 26.8698 31.1491L34.4294 23.5134C35.0144 22.9284 35.0144 21.9841 34.4294 21.3991Z" fill="currentColor"/>
+                      </svg>
+                      <span id="textBadge2" class="text-[1.875em] font-bold leading-[1.35] tracking-[0.005em]" style="text-shadow: 0 0 0.75em rgba(0,0,0,0.25);">차별점 뱃지</span>
+                    </div>
+                  </div>
+
+                  <!-- bottom: tag + 병원명 + 설명 -->
+                  <div class="flex flex-col items-start gap-[1.125em] w-full">
+                    <div id="chipTag" data-field="tag" class="inline-flex items-center justify-center whitespace-nowrap bg-white h-[3.75em] px-[0.9375em] py-[0.84375em] rounded-[0.675em]">
+                      <span id="textTag" class="text-[1.875em] font-black leading-[1.35] text-[#4f4f4f] transition-colors">위치입력(시,군,구)</span>
+                    </div>
+                    <div class="flex flex-col gap-[0.75em] w-full" style="text-shadow: 0 0 0.25em rgba(0,0,0,0.25);">
+                      <p id="textHospitalName" data-field="hospitalName" class="m-0 text-[4.125em] leading-[1.0909] font-bold text-white tracking-[-0.005em] transition-colors">병원명 입력</p>
+                      <p id="textLocation" data-field="location" class="m-0 text-[1.875em] leading-[1.35] font-semibold text-white transition-colors">설명 문구 입력</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Download Button -->
+              <button type="button" id="downloadBtn"
+                      class="w-full flex items-center justify-center gap-[6.3px] p-[14.4px] bg-brand-500 hover:bg-brand-600 active:bg-brand-700 active:translate-y-px text-white rounded-[9px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0">
+                <svg class="w-[21.6px] h-[21.6px] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span class="text-[18px] leading-[19.8px] font-bold tracking-[-0.025em]">PNG로 다운로드</span>
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- ====================================================
+           우측: 입력 폼
+           ==================================================== -->
+      <section class="flex-[1_1_0] max-w-[500px] min-w-[420px]">
+        <div class="bg-white rounded-[21.6px] flex flex-col gap-5 pt-[22px] pb-10 w-full" style="filter: drop-shadow(0 0.9px 1.35px rgba(0,0,0,0.15));">
+
+          <!-- Title -->
+          <div class="flex flex-col pt-px px-12 pb-3">
+            <p class="m-0 text-[20px] leading-[1.4] font-bold tracking-[-0.02em] text-hgray-900">정보를 입력해서</p>
+            <p class="m-0 text-[20px] leading-[1.4] font-bold tracking-[-0.02em] text-hgray-900">디자인을 생성해 주세요</p>
+          </div>
+
+          <form id="bannerForm" onsubmit="return false" class="flex flex-col gap-5">
+
+            <!-- 1. 이미지 첨부 -->
+            <fieldset class="px-12 pb-[14.4px] flex flex-col w-full min-w-0">
+              <legend class="block py-[9px] m-0 text-[16px] leading-[18px] font-bold text-hgray-900">이미지 첨부</legend>
+              <div class="flex flex-col px-[1.8px]">
+                <label id="uploadDropzone" for="imageInput"
+                       class="group relative block w-full min-h-[120px] bg-hgray-50 hover:bg-brand-50 border-[0.9px] border-dashed border-hgray-300 hover:border-brand-500 rounded-[10.8px] cursor-pointer overflow-hidden transition-colors data-[dragover=true]:bg-brand-50 data-[dragover=true]:border-brand-500"
+                       data-dragover="false">
+                  <div id="uploadPreview" class="relative w-full" hidden>
+                    <img src="" alt="첨부 이미지 미리보기" id="uploadPreviewImg" class="block w-full h-[120px] object-cover" />
+                    <button type="button" id="uploadRemove" aria-label="이미지 삭제"
+                            class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 hover:bg-black/85 text-white grid place-items-center transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <div id="uploadPlaceholder" class="flex flex-col items-center justify-center gap-1 h-[120px] text-center px-[14.4px] py-[9px]">
+                    <p class="m-0 text-[14px] leading-[19.8px] font-medium text-hgray-700">이미지 드래그 또는 클릭하여 업로드</p>
+                    <p class="m-0 text-[12px] leading-[16.2px] font-medium text-hgray-400">PNG · JPG  /  권장 1029×480 이상  /  최대 5MB</p>
+                  </div>
+                  <input type="file" id="imageInput" name="image" accept="image/png,image/jpeg" hidden />
+                </label>
+              </div>
+            </fieldset>
+
+            <hr class="w-full m-0 border-0 border-t-[0.9px] border-hgray-100" />
+
+            <!-- 2. 그라데이션 -->
+            <fieldset class="px-12 pb-4 flex flex-col w-full min-w-0">
+              <legend class="block pt-[9px] pb-3 m-0 text-[16.2px] leading-[18px] font-bold text-hgray-900">그라데이션</legend>
+              <div class="flex gap-[14.4px] items-start w-full">
+                <div class="group/field flex-1 min-w-0 flex flex-col">
+                  <label for="gradStartHex" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 transition-colors">시작색</label>
+                  <div class="flex gap-[3.6px] items-stretch w-full">
+                    <input type="color" id="gradStartColor" value="#000000"
+                           class="w-[43.2px] h-[43.2px] p-0 border-[0.9px] border-hgray-300 hover:border-brand-500 rounded-[9px] cursor-pointer bg-white flex-shrink-0 transition-colors" />
+                    <input type="text" id="gradStartHex" value="#000000" maxlength="7"
+                           class="flex-1 min-w-0 h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium uppercase text-hgray-900 bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[9px] outline-none transition-colors" />
+                  </div>
+                </div>
+                <div class="group/field flex-1 min-w-0 flex flex-col">
+                  <label for="gradEndHex" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 transition-colors">끝색</label>
+                  <div class="flex gap-[3.6px] items-stretch w-full">
+                    <input type="color" id="gradEndColor" value="#000000"
+                           class="w-[43.2px] h-[43.2px] p-0 border-[0.9px] border-hgray-300 hover:border-brand-500 rounded-[9px] cursor-pointer bg-white flex-shrink-0 transition-colors" />
+                    <input type="text" id="gradEndHex" value="#000000" maxlength="7"
+                           class="flex-1 min-w-0 h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium uppercase text-hgray-900 bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[9px] outline-none transition-colors" />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <hr class="w-full m-0 border-0 border-t-[0.9px] border-hgray-100" />
+
+            <!-- 3. 특장점 뱃지 1 -->
+            <fieldset class="px-12 pb-4 flex flex-col w-full min-w-0">
+              <legend class="block pt-[9px] pb-3 m-0 text-[16.2px] leading-[18px] font-bold text-hgray-900">특장점 뱃지 1</legend>
+              <div class="flex gap-[14.4px] items-start w-full">
+                <div class="group/field flex-1 min-w-0 flex flex-col" data-target="badge1">
+                  <label for="badge1" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 transition-colors">뱃지 1번</label>
+                  <input class="w-full h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium text-hgray-900 placeholder:text-hgray-400 placeholder:font-medium bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[9px] outline-none transition-colors"
+                         type="text" id="badge1" name="badge1" placeholder="예) 양한방 협진" maxlength="20" />
+                </div>
+                <div class="group/field flex-1 min-w-0 flex flex-col" data-target="badge2">
+                  <label for="badge2" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 transition-colors">뱃지 2번</label>
+                  <input class="w-full h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium text-hgray-900 placeholder:text-hgray-400 placeholder:font-medium bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[9px] outline-none transition-colors"
+                         type="text" id="badge2" name="badge2" placeholder="예) 양한방 협진" maxlength="20" />
+                </div>
+              </div>
+            </fieldset>
+
+            <hr class="w-full m-0 border-0 border-t-[0.9px] border-hgray-100" />
+
+            <!-- 4. 위치정보 시/군 구 + 텍스트 컬러 -->
+            <fieldset class="px-12 pb-4 flex flex-col w-full min-w-0">
+              <legend class="block pt-[9px] pb-3 m-0 text-[16.2px] leading-[18px] font-bold text-hgray-900">위치정보 시/군 구</legend>
+              <div class="flex gap-[14.4px] items-start w-full">
+                <div class="group/field flex-1 min-w-0 flex flex-col" data-target="tag">
+                  <label for="tag" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 truncate transition-colors">하단 흰색 칩 형 뱃지 문구</label>
+                  <input class="w-full h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium text-hgray-900 placeholder:text-hgray-400 placeholder:font-medium bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[9px] outline-none transition-colors"
+                         type="text" id="tag" name="tag" placeholder="예) 서울시 송파구" maxlength="15" />
+                </div>
+                <div class="group/field flex-1 min-w-0 flex flex-col">
+                  <label for="tagTextHex" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 transition-colors">텍스트 컬러</label>
+                  <div class="flex gap-[3.6px] items-stretch w-full">
+                    <input type="color" id="tagTextColor" value="#4f4f4f"
+                           class="w-[43.2px] h-[43.2px] p-0 border-[0.9px] border-hgray-300 hover:border-brand-500 rounded-[9px] cursor-pointer bg-white flex-shrink-0 transition-colors" />
+                    <input type="text" id="tagTextHex" value="#4F4F4F" maxlength="7"
+                           class="flex-1 min-w-0 h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium uppercase text-hgray-900 bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[9px] outline-none transition-colors" />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <hr class="w-full m-0 border-0 border-t-[0.9px] border-hgray-100" />
+
+            <!-- 5. 병원정보 -->
+            <fieldset class="px-12 pb-4 flex flex-col w-full min-w-0">
+              <legend class="block pt-[9px] pb-3 m-0 text-[16.2px] leading-[18px] font-bold text-hgray-900">병원정보</legend>
+              <div class="flex flex-col gap-[14.4px] items-start w-full">
+                <div class="group/field flex flex-col w-full" data-target="hospitalName">
+                  <label for="hospitalName" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 transition-colors">병원 명</label>
+                  <input class="w-full h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium text-hgray-900 placeholder:text-hgray-400 placeholder:font-medium bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[10.8px] outline-none transition-colors"
+                         type="text" id="hospitalName" name="hospitalName" placeholder="예) 힐오한방병원" maxlength="20" />
+                </div>
+                <div class="group/field flex flex-col w-full" data-target="location" data-mode-only="home">
+                  <label for="location" class="block px-[1.8px] pb-[3.6px] text-[12px] leading-[16.2px] font-medium text-hgray-600 group-focus-within/field:text-brand-500 transition-colors">병원 설명 (최대 30자)</label>
+                  <input class="w-full h-[43.2px] px-[14.4px] py-[9px] text-[16px] leading-[19.8px] font-medium text-hgray-900 placeholder:text-hgray-400 placeholder:font-medium bg-white border-[0.9px] border-hgray-300 focus:border-brand-500 rounded-[10.8px] outline-none transition-colors"
+                         type="text" id="location" name="location" placeholder="예) 힐오병원 셔틀버스 운행" maxlength="30" />
+                </div>
+              </div>
+            </fieldset>
+
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast"
+       class="fixed bottom-8 left-1/2 -translate-x-1/2 px-5 py-3 bg-hgray-900 text-white rounded-lg text-sm font-semibold shadow-lg z-[100]"
+       role="status" aria-live="polite" hidden></div>
+
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Build artifacts (npm 빌드 결과는 커밋 — CI 없이 바로 정적 호스팅 가능)
+# tailwind.css는 커밋합니다 (배포 편의)
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+.env
+.env.local
